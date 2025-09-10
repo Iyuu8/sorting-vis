@@ -19,6 +19,41 @@ const bubbleSort= async (arrStuff)=>{
   }while(swaped)
 }
 
+const mergeSort= async ([arr,setArr],tempArr=null,left=0,right=null)=>{
+  if(!right) right = arr.length;
+  if(!tempArr) tempArr=[...arr];
+
+  if(right-left<=1) return;
+  else{
+    let mid = Math.floor((left+right)/2);
+    await mergeSort([arr,setArr],tempArr,left,mid);
+    await mergeSort([arr,setArr],tempArr,mid,right);
+
+    let i=left;
+    let j=mid;
+    let k=left;
+    let merged=[...tempArr];
+    while(i<mid && j<right){
+      if(tempArr[i] < tempArr[j]) merged[k++]=tempArr[i++];
+      else merged[k++]=tempArr[j++];
+      setArr([...merged]);
+      await new Promise(resolve => setTimeout(resolve,10));
+
+    }
+    while(i<mid){
+      merged[k++]=tempArr[i++];
+      setArr([...merged]);
+      await new Promise(resolve => setTimeout(resolve,10));
+    }
+    while(j<right){
+      merged[k++]=tempArr[j++];
+      setArr([...merged]);
+      await new Promise(resolve => setTimeout(resolve,10));
+    }
+    for(let t=left;t<right;t++) tempArr[t]=merged[t];
+  }
+}
+
 
 const randArr=(n)=>{
   const arr=[];
@@ -29,36 +64,56 @@ const randArr=(n)=>{
 }
 
 function App() {
-  const [arr,setArr]=useState(randArr(100));
+  const [arr1,setArr1]=useState(randArr(200));
+  const [arr2,setArr2]=useState([...arr1]);
   return (
     <div className="App">
+        <div className="start-btn-conatiner">
+          <button 
+            className="start-sort"
+            onClick={async ()=>{ 
+              bubbleSort([arr1,setArr1]);
+              mergeSort([arr2,setArr2]);
+            }}
+          > start sort 1</button>
+
+        </div>
       <div className="sorting-container">
-        <div className="sorting-container-1">
-          <ul className="sorting-1">
-            {arr.map((item,ind)=>(
+        <div className="sorting-container-ind">
+          <h2>Bubble Sort</h2>
+          <ul className="sorting">
+            {arr1.map((item,ind)=>(
               <li 
                 className="sort-item"
                 key={`sort1-${ind}`}
                 style={{
-                  backgroundColor:"green",
+                  backgroundColor:"var(--bar-color)",
                   width:`${Math.floor(item/3)}px`,
-                  height: '6px'
+                  height: `calc(100% / ${arr1.length})`,
+                  borderTop:'1px solid var(--text-color)'
                 }}
               ></li>
-            ))
-
-            }
+            ))}
           </ul>
-          <button 
-            className="start-sort"
-            onClick={async ()=> bubbleSort([arr,setArr])}
-          > start sort 1</button>
+          
         </div>
-        <div className="sorting-container-2">
-          <ul className="sorting-2">
+        <div className="sorting-container-ind">
+          <h2>Merge Sort</h2>
+          <ul className="sorting" style={{alignItems:'end'}}>
+            {arr2.map((item,ind)=>(
+              <li 
+                className="sort-item"
+                key={`sort2-${ind}`}
+                style={{
+                  backgroundColor:"var(--bar-color)",
+                  width:`${Math.floor(item/3)}px`,
+                  height: `calc(100% / ${arr1.length})`,
+                  borderTop:'1px solid var(--text-color)'
+                }}
+              ></li>
+            ))}
 
           </ul>
-          <button className="start-sort"></button>
 
         </div>
       </div>
