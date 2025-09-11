@@ -59,6 +59,36 @@ const mergeSort= async ([arr,setArr],tempArr=null,left=0,right=null)=>{
   }
 }
 
+const quickSort= async ([arr,setArr],tempArr=null,low=0,high=arr.length-1)=>{
+  if(!tempArr) tempArr=[...arr];
+  const partition= async ([arr,setArr],tempArr,low,high)=>{
+    const pivot = tempArr[high].val;
+    let i=low-1;
+    for(let j=low;j<high;j++){
+      if(tempArr[j].val<pivot){
+        i++;
+        [tempArr[i],tempArr[j]]=[tempArr[j],tempArr[i]];
+        tempArr.forEach((item,ind) => item.color= ind===j);
+        setArr([...tempArr]);
+        await new Promise(resolve=> setTimeout(resolve,20));
+      }
+    }
+    [tempArr[i+1],tempArr[high]]=[tempArr[high],tempArr[i+1]];
+    tempArr.forEach((item,ind) => item.color= ind===i+1);
+    tempArr.forEach((item,ind) => item.color= ind===i+1);
+    setArr([...tempArr]);
+    await new Promise(resolve=> setTimeout(resolve,20));
+    return i+1;
+  }
+
+  if(low<high){
+    let pi= await partition([arr,setArr],tempArr,low,high);
+    await quickSort([arr,setArr],tempArr,low,pi-1);
+    await quickSort([arr,setArr],tempArr,pi+1,high);
+    tempArr.forEach(item => item.color=false);
+
+  }
+}
 
 const randArr=(n)=>{
   const arr=[];
@@ -69,7 +99,7 @@ const randArr=(n)=>{
 }
 
 function App() {
-  const [arr1,setArr1]=useState(randArr(20));
+  const [arr1,setArr1]=useState(randArr(100));
   const [arr2,setArr2]=useState([...arr1]);
   return (
     <div className="App">
@@ -77,7 +107,8 @@ function App() {
           <button 
             className="start-sort"
             onClick={async ()=>{ 
-              bubbleSort([arr1,setArr1]);
+              //bubbleSort([arr1,setArr1]);
+              quickSort([arr1,setArr1])
               mergeSort([arr2,setArr2]);
             }}
           > start sort 1</button>
@@ -85,7 +116,7 @@ function App() {
         </div>
       <div className="sorting-container">
         <div className="sorting-container-ind">
-          <h2>Bubble Sort</h2>
+          <h2>Quick Sort</h2>
           <ul className="sorting">
             {arr1.map((item,ind)=>(
               <li 
