@@ -1,4 +1,3 @@
-import { color } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const bubbleSort= async (arrStuff)=>{
@@ -90,6 +89,105 @@ const quickSort= async ([arr,setArr],tempArr=null,low=0,high=arr.length-1)=>{
   }
 }
 
+const insertionSort= async ([arr,setArr],tempArr=null)=>{
+  if(!tempArr) tempArr=[...arr];
+  for(let i=0;i<tempArr.length;i++){
+    let key=tempArr[i];
+    let j=i-1;
+
+    while(j>=0 && tempArr[j].val>key.val){
+      tempArr[j+1]=tempArr[j];
+      tempArr = tempArr.map((item,ind)=> ind===j+1? {...item,color:true}:{...item,color:false});
+      setArr([...tempArr]);
+      await new Promise(r=> setTimeout(r,20));
+      j--;
+    }
+    tempArr[j+1]=key;
+    tempArr = tempArr.map((item,ind)=> ind===j+1? {...item,color:true}:{...item,color:false});
+    setArr([...tempArr]);
+  }
+  tempArr = tempArr.map((item,ind)=> ({...item,color:false}));
+  setArr([...tempArr]);
+}
+
+const bogoSort=async ([arr,setArr],tempArr=null)=>{
+  if(!tempArr) tempArr=[...arr];
+  const isSorted=(tempArr)=>{
+    let res=true;
+    let i=0;
+    while(res && i<tempArr.length-1){
+      res = tempArr[i].val <= tempArr[i+1].val;
+      i++;
+    }
+    return res;
+  }
+  const shuffle=(tempArr)=>{
+    const res= new Array(tempArr.length);
+    const exist = new Set();
+    let i;
+    tempArr.forEach((item,ind)=>{
+      do{
+        i=Math.floor(Math.random()*tempArr.length);
+      }while(exist.has(i));
+      exist.add(i);
+      res[i]=item;
+    })
+
+    return res;
+  }
+
+  while(!isSorted(tempArr)){
+    tempArr=shuffle(tempArr);
+    setArr([...tempArr]);
+    await new Promise(r=>setTimeout(r,100));
+  }
+}
+
+const heapSort= async ([arr,setArr])=>{
+  const siftUp= async ([arr,setArr],heap,i)=>{
+    let parent = Math.floor((i-1)/2);
+    while(parent>=0 && heap[i].val>heap[parent].val){
+      [heap[i],heap[parent]]=[heap[parent],heap[i]];
+      setArr([...heap]);
+      i=parent;
+      parent = Math.floor((i-1)/2);
+      await new Promise(r=> setTimeout(r,20));
+    }
+    return heap;
+  }
+  const siftDown= async ([arr,setArr],heap,i,n=heap.length)=>{
+    let child=null;
+    if(i*2+1 < n) child = i*2+1;
+    if(i*2+2 < n) child = (child  && heap[i*2+2].val>heap[child].val)? i*2+2:child;
+    while(child  && heap[child].val>heap[i].val){
+      [heap[child],heap[i]]=[heap[i],heap[child]];
+      heap.forEach((item,ind)=> item.color= (ind===i || ind===n));
+      setArr([...heap]);
+      i = child; 
+      child = null;
+      if(i*2+1 < n) child = i*2+1;
+      if(i*2+2 < n) child = (child  && heap[i*2+2].val>heap[child].val)? i*2+2:child;
+      await new Promise(r=> setTimeout(r,31));
+    }
+    
+    return heap;
+  }
+  const buildHeap= async ([arr,setArr],heap)=>{
+    for(let i=Math.floor(heap.length / 2)-1;i>=0;i--) await siftDown([arr,setArr],heap,i);
+    return heap;
+  }
+
+  let heap = await buildHeap([arr,setArr],[...arr]);
+  for(let end=heap.length-1;end>0;end--){
+    [heap[0],heap[end]]=[heap[end],heap[0]];
+    
+    heap = await siftDown([arr,setArr],heap,0,end);
+    
+  }
+  heap.forEach((item,ind)=> item.color=false);
+  setArr([...heap]);
+}
+
 const randArr=(n)=>{
   const arr=[];
   for(let i=0;i<n;i++){
@@ -108,7 +206,7 @@ function App() {
             className="start-sort"
             onClick={async ()=>{ 
               //bubbleSort([arr1,setArr1]);
-              quickSort([arr1,setArr1])
+              heapSort([arr1,setArr1]);
               mergeSort([arr2,setArr2]);
             }}
           > start sort 1</button>
@@ -116,7 +214,7 @@ function App() {
         </div>
       <div className="sorting-container">
         <div className="sorting-container-ind">
-          <h2>Quick Sort</h2>
+          <h2>heap Sort</h2>
           <ul className="sorting">
             {arr1.map((item,ind)=>(
               <li 
@@ -134,7 +232,7 @@ function App() {
           
         </div>
         <div className="sorting-container-ind">
-          <h2>Merge Sort</h2>
+          <h2>merge Sort</h2>
           <ul className="sorting" style={{alignItems:'end'}}>
             {arr2.map((item,ind)=>(
               <li 
