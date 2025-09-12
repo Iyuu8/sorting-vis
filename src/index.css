@@ -9,6 +9,7 @@
   --text-color-dark:#333;
   --tre:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   --bar-color:rgb(11, 149, 11);
+  --bar-finish-sort:rgb(0, 235, 0);
 }
 html,body,#root,.App{height: 100%;background-color: aliceblue;}
 .App{
@@ -39,17 +40,19 @@ html,body,#root,.App{height: 100%;background-color: aliceblue;}
   cursor: pointer;
 }
 .sorting-container{
-  width: 50%;
+  width: 100%;
   height: calc(100% - 3rem);
   display: flex;
   justify-content: space-between;
 }
 .sorting-container-ind{
+  width: 80%;
   font-family: var(--tre);
   color: var(--text-color-dark);
   display: flex;
   flex-flow: column nowrap;
   gap: 0.5rem;
+  align-items: center;
 }
 .sorting-container-ind h2{
   display: flex;
@@ -58,6 +61,8 @@ html,body,#root,.App{height: 100%;background-color: aliceblue;}
   height: 2.5rem;
 }
 ul{
+  width: 50%;
+  min-width: max-content;
   list-style: none;
   display: flex;
   flex-flow: column nowrap;
@@ -65,4 +70,10 @@ ul{
   padding-bottom: 0.5rem;
 
 }
+.center{
+  display: flex;
+  justify-content: center;
+  
+}
+
 
